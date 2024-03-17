@@ -1,7 +1,9 @@
 use std::fs::File;
 use std::io::Read;
+
 use zusi_xml_lib::xml::zusi::{Zusi, ZusiValue};
 use zusi_xml_lib::xml::zusi::result::ZusiResult;
+
 use zusi_result_lib::result_analyser::ResultAnalyser;
 
 fn main() {
@@ -22,4 +24,5 @@ fn main() {
 
 fn analyse(result: ZusiResult) {
     let analyser = ResultAnalyser::new(result);
+    println!("distance: {}", analyser.distance().unwrap())
 }
