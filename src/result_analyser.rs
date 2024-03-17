@@ -42,7 +42,7 @@ pub mod test {
     use zusi_xml_lib::xml::zusi::result::fahrt_eintrag::{FahrtEintrag, FahrtTyp};
     use crate::result_analyser::ResultAnalyser;
 
-    fn result() -> ZusiResult {
+    fn result(empty: bool) -> ZusiResult {
         ZusiResult {
             zugnummer: "12345".into(),
             tf_nummer: "67890".into(),
@@ -52,46 +52,56 @@ pub mod test {
             schummel: false,
             schwierigkeitsgrad: 0,
             energie_vorgabe: 0.0,
-            value: vec![
-                ResultValue::FahrtEintrag(FahrtEintrag {
-                    fahrt_typ: FahrtTyp::Standard,
-                    fahrt_weg: 2.33,
-                    fahrt_zeit: datetime!(2019-01-01 23:18),
-                    fahrt_speed: 0.0,
-                    fahrt_speed_strecke: 0.0,
-                    fahrt_speed_signal: 0.0,
-                    fahrt_speed_zugsicherung: 0.0,
-                    fahrt_autopilot: false,
-                    fahrt_km: 0.0,
-                    fahrt_hl_druck: 0.0,
-                    fahrt_parameter: 0,
-                    fahrt_fpl_ank: None,
-                    fahrt_fpl_abf: None,
-                    fahrt_fb_schalter: 0,
-                }),
-                ResultValue::FahrtEintrag(FahrtEintrag {
-                    fahrt_typ: FahrtTyp::Standard,
-                    fahrt_weg: 22.43,
-                    fahrt_zeit: datetime!(2019-01-02 1:07),
-                    fahrt_speed: 0.0,
-                    fahrt_speed_strecke: 0.0,
-                    fahrt_speed_signal: 0.0,
-                    fahrt_speed_zugsicherung: 0.0,
-                    fahrt_autopilot: false,
-                    fahrt_km: 0.0,
-                    fahrt_hl_druck: 0.0,
-                    fahrt_parameter: 0,
-                    fahrt_fpl_ank: None,
-                    fahrt_fpl_abf: None,
-                    fahrt_fb_schalter: 0,
-                }),
-            ],
+            value: if empty {
+                vec![]
+            } else {
+                vec![
+                    ResultValue::FahrtEintrag(FahrtEintrag {
+                        fahrt_typ: FahrtTyp::Standard,
+                        fahrt_weg: 2.33,
+                        fahrt_zeit: datetime!(2019-01-01 23:18),
+                        fahrt_speed: 0.0,
+                        fahrt_speed_strecke: 0.0,
+                        fahrt_speed_signal: 0.0,
+                        fahrt_speed_zugsicherung: 0.0,
+                        fahrt_autopilot: false,
+                        fahrt_km: 0.0,
+                        fahrt_hl_druck: 0.0,
+                        fahrt_parameter: 0,
+                        fahrt_fpl_ank: None,
+                        fahrt_fpl_abf: None,
+                        fahrt_fb_schalter: 0,
+                    }),
+                    ResultValue::FahrtEintrag(FahrtEintrag {
+                        fahrt_typ: FahrtTyp::Standard,
+                        fahrt_weg: 22.43,
+                        fahrt_zeit: datetime!(2019-01-02 1:07),
+                        fahrt_speed: 0.0,
+                        fahrt_speed_strecke: 0.0,
+                        fahrt_speed_signal: 0.0,
+                        fahrt_speed_zugsicherung: 0.0,
+                        fahrt_autopilot: false,
+                        fahrt_km: 0.0,
+                        fahrt_hl_druck: 0.0,
+                        fahrt_parameter: 0,
+                        fahrt_fpl_ank: None,
+                        fahrt_fpl_abf: None,
+                        fahrt_fb_schalter: 0,
+                    }),
+                ]
+            },
         }
     }
 
     #[test]
     fn test_distance() {
-        let analyser = ResultAnalyser::new(result());
+        let analyser = ResultAnalyser::new(result(false));
         assert_eq!(analyser.distance().unwrap(), 20.1);
+    }
+
+    #[test]
+    fn test_distance_with_empty_result() {
+        let analyser = ResultAnalyser::new(result(true));
+        assert_eq!(analyser.distance(), Err("No entries found.".into()));
     }
 }
