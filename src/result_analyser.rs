@@ -11,6 +11,7 @@ impl ResultAnalyser {
         }
     }
 
+    // TODO: change Err type to enum
     pub fn distance(&self) -> Result<f32, String> {
         if self.result.value.len() > 0 {
             // TODO: filter for FahrtEintrag
