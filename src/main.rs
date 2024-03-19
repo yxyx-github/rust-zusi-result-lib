@@ -30,6 +30,6 @@ fn main() {
 }
 
 fn analyse(results: Vec<ZusiResult>) {
-    let analyser_group = ResultAnalyserGroup::new(results.into_iter().map(|r| ResultAnalyser::new(r)).collect());
+    let mut analyser_group = ResultAnalyserGroup::new(results.into_iter().map(|r| ResultAnalyser::new(r)).collect());
     println!("distance: {}", analyser_group.distance().unwrap())
 }

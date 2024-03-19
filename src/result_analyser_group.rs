@@ -1,17 +1,36 @@
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
+#[derive(Clone)]
+struct AnalysisCache {
+    total_distance: Option<Result<f32, (f32, Vec<AnalyseError>)>>,
+}
+
+impl AnalysisCache {
+    pub fn new() -> AnalysisCache {
+        Self {
+            total_distance: None,
+        }
+    }
+}
+
 pub struct ResultAnalyserGroup {
     analysers: Vec<ResultAnalyser>,
+    cache: AnalysisCache,
 }
 
 impl ResultAnalyserGroup {
     pub fn new(analysers: Vec<ResultAnalyser>) -> ResultAnalyserGroup {
         Self {
             analysers,
+            cache: AnalysisCache::new(),
         }
     }
 
-    pub fn distance(&self) -> Result<f32, (f32, Vec<AnalyseError>)> {
+    pub fn distance(&mut self) -> Result<f32, (f32, Vec<AnalyseError>)> {
+        if let Some(result) = &self.cache.total_distance {
+            return result.clone();
+        }
+
         let mut total_distance = 0.0;
         let mut errors = vec![];
 
@@ -22,11 +41,14 @@ impl ResultAnalyserGroup {
             };
         });
 
-        if errors.len() > 0 {
+        let result = if errors.len() > 0 {
             Err((total_distance, errors))
         } else {
             Ok(total_distance)
-        }
+        };
+
+        self.cache.total_distance = Some(result.clone());
+        result
     }
 }
 
@@ -92,7 +114,7 @@ pub mod test {
 
     #[test]
     fn test_distance() {
-        let analyser_group = ResultAnalyserGroup::new(vec![
+        let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(false, 2.33, 22.43)),
             ResultAnalyser::new(result(false, 7.33, 72.43)),
         ]);
@@ -101,7 +123,7 @@ pub mod test {
 
     #[test]
     fn test_distance_with_single_error() {
-        let analyser_group = ResultAnalyserGroup::new(vec![
+        let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(true, 2.33, 22.43)),
             ResultAnalyser::new(result(false, 7.33, 72.43)),
         ]);
@@ -113,7 +135,7 @@ pub mod test {
 
     #[test]
     fn test_distance_with_all_error() {
-        let analyser_group = ResultAnalyserGroup::new(vec![
+        let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(true, 2.33, 22.43)),
             ResultAnalyser::new(result(true, 7.33, 72.43)),
         ]);
