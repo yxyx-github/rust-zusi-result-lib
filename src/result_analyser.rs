@@ -1,5 +1,10 @@
 use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 
+#[derive(PartialEq, Debug)]
+pub enum AnalyseError {
+    NoEntriesFound,
+}
+
 pub struct ResultAnalyser {
     result: ZusiResult,
 }
@@ -11,27 +16,13 @@ impl ResultAnalyser {
         }
     }
 
-    // TODO: change Err type to enum
-    pub fn distance(&self) -> Result<f32, String> {
+    pub fn distance(&self) -> Result<f32, AnalyseError> {
         if self.result.value.len() > 0 {
-            // TODO: filter for FahrtEintrag
-            let first = self.result.value.first().unwrap();
-            let last = self.result.value.last().unwrap();
-            let first = match first {
-                ResultValue::FahrtEintrag(first) => first.fahrt_weg,
-                _ => {
-                    return Err("Entry not valid.".into())
-                }
-            };
-            let last = match last {
-                ResultValue::FahrtEintrag(last) => last.fahrt_weg,
-                _ => {
-                    return Err("Entry not valid.".into())
-                }
-            };
-            Ok(last - first)
+            let ResultValue::FahrtEintrag(first) = self.result.value.first().unwrap();
+            let ResultValue::FahrtEintrag(last) = self.result.value.last().unwrap();
+            Ok(last.fahrt_weg - first.fahrt_weg)
         } else {
-            Err("No entries found.".into())
+            Err(AnalyseError::NoEntriesFound)
         }
     }
 }
@@ -41,7 +32,7 @@ pub mod test {
     use time::macros::datetime;
     use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
     use zusi_xml_lib::xml::zusi::result::fahrt_eintrag::{FahrtEintrag, FahrtTyp};
-    use crate::result_analyser::ResultAnalyser;
+    use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
     fn result(empty: bool) -> ZusiResult {
         ZusiResult {
@@ -103,6 +94,6 @@ pub mod test {
     #[test]
     fn test_distance_with_empty_result() {
         let analyser = ResultAnalyser::new(result(true));
-        assert_eq!(analyser.distance(), Err("No entries found.".into()));
+        assert_eq!(analyser.distance(), Err(AnalyseError::NoEntriesFound));
     }
 }
