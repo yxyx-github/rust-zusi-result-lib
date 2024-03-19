@@ -5,24 +5,31 @@ use zusi_xml_lib::xml::zusi::{Zusi, ZusiValue};
 use zusi_xml_lib::xml::zusi::result::ZusiResult;
 
 use zusi_result_lib::result_analyser::ResultAnalyser;
+use zusi_result_lib::result_analyser_group::ResultAnalyserGroup;
 
 fn main() {
     println!("Hello, world!");
 
-    let mut input_file = File::open("./data/Ergebnis.result.xml").unwrap();
-    let mut contents = String::new();
-    input_file.read_to_string(&mut contents).unwrap();
+    let mut results = vec![];
 
-    let zusi = Zusi::from_xml(&contents).unwrap();
+    for i in 1..4 {
+        let mut input_file = File::open(format!("./data/Ergebnis{i}.result.xml")).unwrap();
+        let mut contents = String::new();
+        input_file.read_to_string(&mut contents).unwrap();
 
-    for value in zusi.value {
-        if let ZusiValue::Result(result) = value {
-            analyse(result);
+        let zusi = Zusi::from_xml(&contents).unwrap();
+
+        for value in zusi.value {
+            if let ZusiValue::Result(result) = value {
+                results.push(result);
+            }
         }
     }
+
+    analyse(results);
 }
 
-fn analyse(result: ZusiResult) {
-    let analyser = ResultAnalyser::new(result);
-    println!("distance: {}", analyser.distance().unwrap())
+fn analyse(results: Vec<ZusiResult>) {
+    let analyser_group = ResultAnalyserGroup::new(results.into_iter().map(|r| ResultAnalyser::new(r)).collect());
+    println!("distance: {}", analyser_group.distance().unwrap())
 }
