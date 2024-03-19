@@ -1,14 +1,15 @@
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
-#[derive(Clone)]
 struct AnalysisCache {
     total_distance: Option<f32>,
+    average_distance: Option<f32>,
 }
 
 impl AnalysisCache {
     pub fn new() -> AnalysisCache {
         Self {
             total_distance: None,
+            average_distance: None,
         }
     }
 }
@@ -26,7 +27,7 @@ impl ResultAnalyserGroup {
         }
     }
 
-    pub fn distance(&mut self) -> Result<f32, AnalyseError> {
+    pub fn total_distance(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.total_distance {
             return Ok(*value);
         }
@@ -42,6 +43,17 @@ impl ResultAnalyserGroup {
 
         self.cache.total_distance = Some(total_distance);
         Ok(total_distance)
+    }
+
+    pub fn average_distance(&mut self) -> Result<f32, AnalyseError> {
+        if let Some(value) = &self.cache.average_distance {
+            return Ok(*value);
+        }
+
+        let average_distance = self.total_distance()? / self.analysers.len() as f32;
+
+        self.cache.average_distance = Some(average_distance);
+        Ok(average_distance)
     }
 }
 
@@ -106,34 +118,43 @@ pub mod test {
     }
 
     #[test]
-    fn test_distance() {
+    fn test_total_distance() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(false, 2.33, 22.43)),
             ResultAnalyser::new(result(false, 7.33, 72.43)),
         ]);
-        assert_eq!(analyser_group.distance().unwrap(), 85.2);
+        assert_eq!(analyser_group.total_distance().unwrap(), 85.2);
     }
 
     #[test]
-    fn test_distance_with_single_error() {
+    fn test_total_distance_with_error() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(true, 2.33, 22.43)),
             ResultAnalyser::new(result(false, 7.33, 72.43)),
         ]);
         assert_eq!(
-            analyser_group.distance(),
+            analyser_group.total_distance(),
             Err(AnalyseError::NoEntriesFound)
         );
     }
 
     #[test]
-    fn test_distance_with_all_error() {
+    fn test_average_distance() {
+        let mut analyser_group = ResultAnalyserGroup::new(vec![
+            ResultAnalyser::new(result(false, 2.33, 22.43)),
+            ResultAnalyser::new(result(false, 7.33, 72.43)),
+        ]);
+        assert_eq!(analyser_group.average_distance().unwrap(), 42.6);
+    }
+
+    #[test]
+    fn test_average_distance_with_error() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(true, 2.33, 22.43)),
-            ResultAnalyser::new(result(true, 7.33, 72.43)),
+            ResultAnalyser::new(result(false, 7.33, 72.43)),
         ]);
         assert_eq!(
-            analyser_group.distance(),
+            analyser_group.average_distance(),
             Err(AnalyseError::NoEntriesFound)
         );
     }

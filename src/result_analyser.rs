@@ -1,6 +1,6 @@
 use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(PartialEq, Debug)]
 pub enum AnalyseError {
     NoEntriesFound,
 }
