@@ -2,7 +2,7 @@ use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
 #[derive(Clone)]
 struct AnalysisCache {
-    total_distance: Option<Result<f32, (f32, Vec<AnalyseError>)>>,
+    total_distance: Option<f32>,
 }
 
 impl AnalysisCache {
@@ -26,29 +26,22 @@ impl ResultAnalyserGroup {
         }
     }
 
-    pub fn distance(&mut self) -> Result<f32, (f32, Vec<AnalyseError>)> {
-        if let Some(result) = &self.cache.total_distance {
-            return result.clone();
+    pub fn distance(&mut self) -> Result<f32, AnalyseError> {
+        if let Some(value) = &self.cache.total_distance {
+            return Ok(*value);
         }
 
         let mut total_distance = 0.0;
-        let mut errors = vec![];
 
-        self.analysers.iter().for_each(|analyser| {
+        for analyser in self.analysers.iter() {
             match analyser.distance() {
                 Ok(distance) => total_distance += distance,
-                Err(error) => errors.push(error),
+                Err(error) => return Err(error),
             };
-        });
+        }
 
-        let result = if errors.len() > 0 {
-            Err((total_distance, errors))
-        } else {
-            Ok(total_distance)
-        };
-
-        self.cache.total_distance = Some(result.clone());
-        result
+        self.cache.total_distance = Some(total_distance);
+        Ok(total_distance)
     }
 }
 
@@ -129,7 +122,7 @@ pub mod test {
         ]);
         assert_eq!(
             analyser_group.distance(),
-            Err((65.1, vec![AnalyseError::NoEntriesFound]))
+            Err(AnalyseError::NoEntriesFound)
         );
     }
 
@@ -141,7 +134,7 @@ pub mod test {
         ]);
         assert_eq!(
             analyser_group.distance(),
-            Err((0.0, vec![AnalyseError::NoEntriesFound, AnalyseError::NoEntriesFound]))
+            Err(AnalyseError::NoEntriesFound)
         );
     }
 }
