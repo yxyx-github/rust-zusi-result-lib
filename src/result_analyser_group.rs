@@ -118,6 +118,18 @@ pub mod test {
     }
 
     #[test]
+    fn test_caching() {
+        let mut analyser_group = ResultAnalyserGroup::new(vec![
+            ResultAnalyser::new(result(false, 2.33, 22.43)),
+            ResultAnalyser::new(result(false, 7.33, 72.43)),
+        ]);
+        for _ in 0..2 {
+            assert_eq!(analyser_group.total_distance().unwrap(), 85.2);
+            assert_eq!(analyser_group.average_distance().unwrap(), 42.6);
+        }
+    }
+
+    #[test]
     fn test_total_distance() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
             ResultAnalyser::new(result(false, 2.33, 22.43)),
