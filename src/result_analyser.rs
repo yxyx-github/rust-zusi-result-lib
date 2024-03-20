@@ -5,10 +5,11 @@ use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 
 #[derive(PartialEq, Debug)]
 pub enum AnalyseError {
-    NoEntriesFound,
+    NoEntries,
     ZeroDistance,
 }
 
+#[derive(PartialEq, Debug)]
 pub struct ResultAnalyser {
     result: ZusiResult,
 }
@@ -26,7 +27,7 @@ impl ResultAnalyser {
             let ResultValue::FahrtEintrag(last) = self.result.value.last().unwrap();
             Ok(last.fahrt_weg - first.fahrt_weg)
         } else {
-            Err(AnalyseError::NoEntriesFound)
+            Err(AnalyseError::NoEntries)
         }
     }
 
@@ -44,7 +45,7 @@ impl ResultAnalyser {
             }
             Ok(weighted_speed_sum / self.distance()?)
         } else {
-            Err(AnalyseError::NoEntriesFound)
+            Err(AnalyseError::NoEntries)
         }
     }
 

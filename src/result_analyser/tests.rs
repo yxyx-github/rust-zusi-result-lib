@@ -64,7 +64,7 @@ fn test_distance() {
 #[test]
 fn test_distance_with_empty_result() {
     let analyser = ResultAnalyser::new(distance_result(true));
-    assert_eq!(analyser.distance(), Err(AnalyseError::NoEntriesFound));
+    assert_eq!(analyser.distance(), Err(AnalyseError::NoEntries));
 }
 
 #[test]
@@ -235,5 +235,5 @@ fn test_average_speed_0() {
     };
 
     let analyser = ResultAnalyser::new(result);
-    assert_eq!(analyser.average_speed(), Err(AnalyseError::NoEntriesFound));
+    assert_eq!(analyser.average_speed(), Err(AnalyseError::NoEntries));
 }

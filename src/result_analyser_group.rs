@@ -3,6 +3,12 @@ mod tests;
 
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
+#[derive(PartialEq, Debug)]
+pub enum CreateAnalyserGroupError {
+    NoAnalysers,
+}
+
+#[derive(PartialEq, Debug)]
 struct AnalysisCache {
     total_distance: Option<f32>,
     average_distance: Option<f32>,
@@ -19,17 +25,21 @@ impl AnalysisCache {
     }
 }
 
+#[derive(PartialEq, Debug)]
 pub struct ResultAnalyserGroup {
     analysers: Vec<ResultAnalyser>,
     cache: AnalysisCache,
 }
 
 impl ResultAnalyserGroup {
-    pub fn new(analysers: Vec<ResultAnalyser>) -> ResultAnalyserGroup {
-        // TODO: check if analysers.len > 0
-        Self {
-            analysers,
-            cache: AnalysisCache::new(),
+    pub fn new(analysers: Vec<ResultAnalyser>) -> Result<ResultAnalyserGroup, CreateAnalyserGroupError> {
+        if analysers.len() == 0 {
+            Err(CreateAnalyserGroupError::NoAnalysers)
+        } else {
+            Ok(Self {
+                analysers,
+                cache: AnalysisCache::new(),
+            })
         }
     }
 

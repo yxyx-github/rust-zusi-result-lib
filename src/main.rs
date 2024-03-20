@@ -30,7 +30,9 @@ fn main() {
 }
 
 fn analyse(results: Vec<ZusiResult>) {
-    let mut analyser_group = ResultAnalyserGroup::new(results.into_iter().map(|r| ResultAnalyser::new(r)).collect());
+    let mut analyser_group = ResultAnalyserGroup::new(
+        results.into_iter().map(|r| ResultAnalyser::new(r)).collect()
+    ).unwrap();
     println!("total distance: {} m", analyser_group.total_distance().unwrap());
     let average_speed = analyser_group.average_speed().unwrap();
     println!("average speed: {} m/s = {} km/h", average_speed, average_speed * 3.6);
