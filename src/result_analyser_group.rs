@@ -3,6 +3,7 @@ use crate::result_analyser::{AnalyseError, ResultAnalyser};
 struct AnalysisCache {
     total_distance: Option<f32>,
     average_distance: Option<f32>,
+    average_speed: Option<f32>,
 }
 
 impl AnalysisCache {
@@ -10,6 +11,7 @@ impl AnalysisCache {
         Self {
             total_distance: None,
             average_distance: None,
+            average_speed: None,
         }
     }
 }
@@ -52,6 +54,22 @@ impl ResultAnalyserGroup {
         self.cache.average_distance = Some(average_distance);
         Ok(average_distance)
     }
+
+    pub fn average_speed(&mut self) -> Result<f32, AnalyseError> {
+        if let Some(value) = &self.cache.average_speed {
+            return Ok(*value);
+        }
+
+        let mut weighted_speed_sum = 0.0;
+        for analyser in self.analysers.iter() {
+            weighted_speed_sum += analyser.distance()? * analyser.average_speed()?;
+        }
+
+        let average_speed = weighted_speed_sum / self.total_distance()?;
+
+        self.cache.average_speed = Some(average_speed);
+        Ok(average_speed)
+    }
 }
 
 #[cfg(test)]
@@ -63,7 +81,7 @@ mod tests {
     use crate::result_analyser::{AnalyseError, ResultAnalyser};
     use crate::result_analyser_group::ResultAnalyserGroup;
 
-    fn result(empty: bool, fahrt_weg_1: f32, fahrt_weg_2: f32) -> ZusiResult {
+    fn total_distance_result(empty: bool, fahrt_weg_1: f32, fahrt_weg_2: f32) -> ZusiResult {
         ZusiResult {
             zugnummer: "12345".into(),
             tf_nummer: "67890".into(),
@@ -117,8 +135,8 @@ mod tests {
     #[test]
     fn test_caching() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
-            ResultAnalyser::new(result(false, 2.33, 22.43)),
-            ResultAnalyser::new(result(false, 7.33, 72.43)),
+            ResultAnalyser::new(total_distance_result(false, 2.33, 22.43)),
+            ResultAnalyser::new(total_distance_result(false, 7.33, 72.43)),
         ]);
         for _ in 0..2 {
             assert_eq!(analyser_group.total_distance().unwrap(), 85.2);
@@ -129,8 +147,8 @@ mod tests {
     #[test]
     fn test_total_distance() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
-            ResultAnalyser::new(result(false, 2.33, 22.43)),
-            ResultAnalyser::new(result(false, 7.33, 72.43)),
+            ResultAnalyser::new(total_distance_result(false, 2.33, 22.43)),
+            ResultAnalyser::new(total_distance_result(false, 7.33, 72.43)),
         ]);
         assert_eq!(analyser_group.total_distance().unwrap(), 85.2);
     }
@@ -138,8 +156,8 @@ mod tests {
     #[test]
     fn test_total_distance_with_error() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
-            ResultAnalyser::new(result(true, 2.33, 22.43)),
-            ResultAnalyser::new(result(false, 7.33, 72.43)),
+            ResultAnalyser::new(total_distance_result(true, 2.33, 22.43)),
+            ResultAnalyser::new(total_distance_result(false, 7.33, 72.43)),
         ]);
         assert_eq!(
             analyser_group.total_distance(),
@@ -150,8 +168,8 @@ mod tests {
     #[test]
     fn test_average_distance() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
-            ResultAnalyser::new(result(false, 2.33, 22.43)),
-            ResultAnalyser::new(result(false, 7.33, 72.43)),
+            ResultAnalyser::new(total_distance_result(false, 2.33, 22.43)),
+            ResultAnalyser::new(total_distance_result(false, 7.33, 72.43)),
         ]);
         assert_eq!(analyser_group.average_distance().unwrap(), 42.6);
     }
@@ -159,8 +177,8 @@ mod tests {
     #[test]
     fn test_average_distance_with_error() {
         let mut analyser_group = ResultAnalyserGroup::new(vec![
-            ResultAnalyser::new(result(true, 2.33, 22.43)),
-            ResultAnalyser::new(result(false, 7.33, 72.43)),
+            ResultAnalyser::new(total_distance_result(true, 2.33, 22.43)),
+            ResultAnalyser::new(total_distance_result(false, 7.33, 72.43)),
         ]);
         assert_eq!(
             analyser_group.average_distance(),
