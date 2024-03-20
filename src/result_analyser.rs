@@ -6,6 +6,7 @@ use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 #[derive(PartialEq, Debug)]
 pub enum AnalyseError {
     NoEntriesFound,
+    ZeroDistance,
 }
 
 pub struct ResultAnalyser {
@@ -30,7 +31,9 @@ impl ResultAnalyser {
     }
 
     pub fn average_speed(&self) -> Result<f32, AnalyseError> {
-        if self.result.value.len() > 1 {
+        if self.distance()? == 0.0 {
+            Err(AnalyseError::ZeroDistance)
+        } else if self.result.value.len() > 1 {
             let mut weighted_speed_sum = 0.0;
             for i in 0..self.result.value.len() - 1 {
                 let ResultValue::FahrtEintrag(current) = self.result.value.get(i).unwrap();
@@ -40,11 +43,10 @@ impl ResultAnalyser {
                 weighted_speed_sum += local_distance * local_average_speed;
             }
             Ok(weighted_speed_sum / self.distance()?)
-        } else if self.result.value.len() > 0 {
-            let ResultValue::FahrtEintrag(first) = self.result.value.first().unwrap();
-            Ok(first.fahrt_speed)
         } else {
             Err(AnalyseError::NoEntriesFound)
         }
     }
+
+    // TODO: add average_moving_speed
 }

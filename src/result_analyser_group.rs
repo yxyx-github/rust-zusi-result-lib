@@ -64,10 +64,6 @@ impl ResultAnalyserGroup {
             return Ok(*value);
         }
 
-        if self.total_distance()? == 0.0 {
-            // TODO: return error becaus of 0.0 / 0.0 = NaN
-        }
-
         let mut weighted_speed_sum = 0.0;
         for analyser in self.analysers.iter() {
             weighted_speed_sum += analyser.distance()? * analyser.average_speed()?;

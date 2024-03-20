@@ -217,7 +217,7 @@ fn test_average_speed_1() {
     };
 
     let analyser = ResultAnalyser::new(result);
-    assert_eq!(analyser.average_speed().unwrap(), 10.0);
+    assert_eq!(analyser.average_speed(), Err(AnalyseError::ZeroDistance));
 }
 
 #[test]

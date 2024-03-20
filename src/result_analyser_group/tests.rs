@@ -66,6 +66,7 @@ fn test_caching() {
         assert_eq!(analyser_group.total_distance().unwrap(), 85.2);
         assert_eq!(analyser_group.average_distance().unwrap(), 42.6);
     }
+    // TODO: test average_speed
 }
 
 #[test]
@@ -272,8 +273,39 @@ fn test_average_speed_1() {
         ResultAnalyser::new(result2),
     ]);
 
-    println!("avgspd: {:?}", analyser_group.average_speed());
-    assert_eq!(analyser_group.average_speed().unwrap(), 5.0);
+    assert_eq!(analyser_group.average_speed(), Err(AnalyseError::ZeroDistance));
 }
 
-// TODO: test average_speed with error
+#[test]
+fn test_average_speed_0() {
+    let result1 = ZusiResult {
+        zugnummer: "12345".into(),
+        tf_nummer: "67890".into(),
+        datum: datetime!(2019-01-01 23:14),
+        verbrauch: 0.0,
+        bemerkung: "".to_string(),
+        schummel: false,
+        schwierigkeitsgrad: 0,
+        energie_vorgabe: 0.0,
+        value: vec![],
+    };
+    let result2 = ZusiResult {
+        zugnummer: "12345".into(),
+        tf_nummer: "67890".into(),
+        datum: datetime!(2019-01-01 23:14),
+        verbrauch: 0.0,
+        bemerkung: "".to_string(),
+        schummel: false,
+        schwierigkeitsgrad: 0,
+        energie_vorgabe: 0.0,
+        value: vec![],
+    };
+
+    let mut analyser_group = ResultAnalyserGroup::new(vec![
+        ResultAnalyser::new(result1),
+        ResultAnalyser::new(result2),
+    ]);
+
+    println!("avgspd: {:?}", analyser_group.average_speed());
+    assert_eq!(analyser_group.average_speed(), Err(AnalyseError::NoEntriesFound));
+}
