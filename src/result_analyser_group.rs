@@ -35,10 +35,7 @@ impl ResultAnalyserGroup {
         let mut total_distance = 0.0;
 
         for analyser in self.analysers.iter() {
-            match analyser.distance() {
-                Ok(distance) => total_distance += distance,
-                Err(error) => return Err(error),
-            };
+            total_distance += analyser.distance()?;
         }
 
         self.cache.total_distance = Some(total_distance);
