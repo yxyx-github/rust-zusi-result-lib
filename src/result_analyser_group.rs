@@ -26,6 +26,7 @@ pub struct ResultAnalyserGroup {
 
 impl ResultAnalyserGroup {
     pub fn new(analysers: Vec<ResultAnalyser>) -> ResultAnalyserGroup {
+        // TODO: check if analysers.len > 0
         Self {
             analysers,
             cache: AnalysisCache::new(),
