@@ -109,3 +109,5 @@ fn test_average_distance_with_error() {
         Err(AnalyseError::NoEntriesFound)
     );
 }
+
+// TODO: test average_speed
