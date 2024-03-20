@@ -58,7 +58,7 @@ impl ResultAnalyserGroup {
 }
 
 #[cfg(test)]
-pub mod test {
+mod tests {
     use time::macros::datetime;
     use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
     use zusi_xml_lib::xml::zusi::result::fahrt_eintrag::{FahrtEintrag, FahrtTyp};
