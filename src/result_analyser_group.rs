@@ -69,4 +69,6 @@ impl ResultAnalyserGroup {
         self.cache.average_speed = Some(average_speed);
         Ok(average_speed)
     }
+
+    //TODO: implement driving_time, pure_driving_time
 }
