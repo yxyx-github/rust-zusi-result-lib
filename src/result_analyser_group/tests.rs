@@ -18,7 +18,7 @@ fn test_caching() {
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
                 .fahrt_weg(3.)
-                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .fahrt_zeit(datetime!(2019-01-01 23:28))
                 .fahrt_speed(8.)
                 .build()),
         ])
@@ -33,7 +33,7 @@ fn test_caching() {
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
                 .fahrt_weg(9.)
-                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .fahrt_zeit(datetime!(2019-01-01 23:33))
                 .fahrt_speed(4.)
                 .build()),
         ])
@@ -48,6 +48,7 @@ fn test_caching() {
         assert_eq!(analyser_group.total_distance().unwrap(), 12.);
         assert_eq!(analyser_group.average_distance().unwrap(), 6.);
         assert_eq!(analyser_group.average_speed().unwrap(), 5.);
+        assert_eq!(analyser_group.total_driving_time().unwrap(), Duration::minutes(25));
     }
 }
 
