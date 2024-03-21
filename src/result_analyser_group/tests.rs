@@ -1,3 +1,4 @@
+use time::Duration;
 use time::macros::datetime;
 use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 use zusi_xml_lib::xml::zusi::result::fahrt_eintrag::FahrtEintrag;
@@ -281,4 +282,66 @@ fn test_average_speed_0() {
     ]).unwrap();
 
     assert_eq!(analyser_group.average_speed(), Err(AnalyseError::NoEntries));
+}
+
+#[test]
+fn test_total_driving_time() {
+    let result1 = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:28))
+                .build()),
+        ])
+        .build();
+    let result2 = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:33))
+                .build()),
+        ])
+        .build();
+
+    let mut analyser_group = ResultAnalyserGroup::new(vec![
+        ResultAnalyser::new(result1),
+        ResultAnalyser::new(result2),
+    ]).unwrap();
+
+    assert_eq!(analyser_group.total_driving_time().unwrap(), Duration::minutes(25));
+}
+
+#[test]
+fn test_total_driving_time_with_error() {
+    let result1 = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_zeit(datetime!(2019-01-01 23:28))
+                .build()),
+        ])
+        .build();
+    let result2 = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![])
+        .build();
+
+    let mut analyser_group = ResultAnalyserGroup::new(vec![
+        ResultAnalyser::new(result1),
+        ResultAnalyser::new(result2),
+    ]).unwrap();
+
+    assert_eq!(
+        analyser_group.total_distance(),
+        Err(AnalyseError::NoEntries)
+    );
 }

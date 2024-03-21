@@ -2,6 +2,7 @@
 mod tests;
 mod analyser_group_cache;
 
+use time::Duration;
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
 
@@ -70,5 +71,20 @@ impl ResultAnalyserGroup {
         Ok(average_speed)
     }
 
-    //TODO: implement driving_time, pure_driving_time
+    pub fn total_driving_time(&mut self) -> Result<Duration, AnalyseError> {
+        if let Some(value) = &self.cache.total_driving_time {
+            return Ok(*value);
+        }
+
+        let mut total_driving_time = Duration::seconds(0);
+
+        for analyser in self.analysers.iter() {
+            total_driving_time += analyser.driving_time()?;
+        }
+
+        self.cache.total_driving_time = Some(total_driving_time);
+        Ok(total_driving_time)
+    }
+
+    //TODO: implement pure_driving_time
 }
