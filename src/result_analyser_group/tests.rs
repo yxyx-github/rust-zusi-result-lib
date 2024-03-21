@@ -69,7 +69,7 @@ fn test_caching() {
         assert_eq!(analyser_group.average_distance().unwrap(), 10.);
         assert_eq!(analyser_group.average_speed().unwrap(), 3.9);
         assert_eq!(analyser_group.total_driving_time().unwrap(), Duration::minutes(65));
-        assert_eq!(analyser_group.pure_total_driving_time().unwrap(), Duration::minutes(45));
+        assert_eq!(analyser_group.total_pure_driving_time().unwrap(), Duration::minutes(45));
     }
 }
 
@@ -369,7 +369,7 @@ fn test_total_driving_time_with_error() {
 }
 
 #[test]
-fn test_pure_total_driving_time() {
+fn test_total_pure_driving_time() {
     let result1 = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
@@ -410,11 +410,11 @@ fn test_pure_total_driving_time() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    assert_eq!(analyser_group.pure_total_driving_time().unwrap(), Duration::minutes(35));
+    assert_eq!(analyser_group.total_pure_driving_time().unwrap(), Duration::minutes(35));
 }
 
 #[test]
-fn test_pure_total_driving_time_with_error() {
+fn test_total_pure_driving_time_with_error() {
     let result1 = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![

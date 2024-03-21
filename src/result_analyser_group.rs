@@ -86,18 +86,18 @@ impl ResultAnalyserGroup {
         Ok(total_driving_time)
     }
 
-    pub fn pure_total_driving_time(&mut self) -> Result<Duration, AnalyseError> {
-        if let Some(value) = &self.cache.pure_total_driving_time {
+    pub fn total_pure_driving_time(&mut self) -> Result<Duration, AnalyseError> {
+        if let Some(value) = &self.cache.total_pure_driving_time {
             return Ok(*value);
         }
 
-        let mut pure_total_driving_time = Duration::seconds(0);
+        let mut total_pure_driving_time = Duration::seconds(0);
 
         for analyser in self.analysers.iter() {
-            pure_total_driving_time += analyser.pure_driving_time()?;
+            total_pure_driving_time += analyser.pure_driving_time()?;
         }
 
-        self.cache.pure_total_driving_time = Some(pure_total_driving_time);
-        Ok(pure_total_driving_time)
+        self.cache.total_pure_driving_time = Some(total_pure_driving_time);
+        Ok(total_pure_driving_time)
     }
 }
