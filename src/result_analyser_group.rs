@@ -33,7 +33,7 @@ impl ResultAnalyserGroup {
             return Ok(*value);
         }
 
-        let mut total_distance = 0.0;
+        let mut total_distance = 0.;
 
         for analyser in self.analysers.iter() {
             total_distance += analyser.distance()?;
@@ -59,7 +59,7 @@ impl ResultAnalyserGroup {
             return Ok(*value);
         }
 
-        let mut weighted_speed_sum = 0.0;
+        let mut weighted_speed_sum = 0.;
         for analyser in self.analysers.iter() {
             weighted_speed_sum += analyser.distance()? * analyser.average_speed()?;
         }

@@ -34,14 +34,14 @@ impl ResultAnalyser {
     }
 
     pub fn average_speed(&self) -> Result<f32, AnalyseError> {
-        if self.distance()? == 0.0 {
+        if self.distance()? == 0. {
             Err(AnalyseError::ZeroDistance)
         } else if self.result.value.len() > 1 {
-            let mut weighted_speed_sum = 0.0;
+            let mut weighted_speed_sum = 0.;
             for i in 0..self.result.value.len() - 1 {
                 let ResultValue::FahrtEintrag(current) = self.result.value.get(i).unwrap();
                 let ResultValue::FahrtEintrag(next) = self.result.value.get(i + 1).unwrap();
-                let local_average_speed = (current.fahrt_speed + next.fahrt_speed) / 2.0;
+                let local_average_speed = (current.fahrt_speed + next.fahrt_speed) / 2.;
                 let local_distance = next.fahrt_weg - current.fahrt_weg;
                 weighted_speed_sum += local_distance * local_average_speed;
             }
@@ -67,7 +67,7 @@ impl ResultAnalyser {
             for i in 0..self.result.value.len() - 1 {
                 let ResultValue::FahrtEintrag(current) = self.result.value.get(i).unwrap();
                 let ResultValue::FahrtEintrag(next) = self.result.value.get(i + 1).unwrap();
-                if current.fahrt_speed > 0.0 || next.fahrt_speed > 0.0 {
+                if current.fahrt_speed > 0. || next.fahrt_speed > 0. {
                     driving_time += next.fahrt_zeit - current.fahrt_zeit;
                 }
             }

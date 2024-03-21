@@ -11,14 +11,14 @@ fn test_caching() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(0.0)
+                .fahrt_weg(0.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(8.0)
+                .fahrt_speed(8.)
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(3.0)
+                .fahrt_weg(3.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(8.0)
+                .fahrt_speed(8.)
                 .build()),
         ])
         .build();
@@ -26,14 +26,14 @@ fn test_caching() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(0.0)
+                .fahrt_weg(0.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(4.0)
+                .fahrt_speed(4.)
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(9.0)
+                .fahrt_weg(9.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(4.0)
+                .fahrt_speed(4.)
                 .build()),
         ])
         .build();
@@ -44,9 +44,9 @@ fn test_caching() {
     ]).unwrap();
 
     for _ in 0..2 {
-        assert_eq!(analyser_group.total_distance().unwrap(), 12.0);
-        assert_eq!(analyser_group.average_distance().unwrap(), 6.0);
-        assert_eq!(analyser_group.average_speed().unwrap(), 5.0);
+        assert_eq!(analyser_group.total_distance().unwrap(), 12.);
+        assert_eq!(analyser_group.average_distance().unwrap(), 6.);
+        assert_eq!(analyser_group.average_speed().unwrap(), 5.);
     }
 }
 
@@ -198,14 +198,14 @@ fn test_average_speed_2() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(0.0)
+                .fahrt_weg(0.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(8.0)
+                .fahrt_speed(8.)
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(3.0)
+                .fahrt_weg(3.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(8.0)
+                .fahrt_speed(8.)
                 .build()),
         ])
         .build();
@@ -213,14 +213,14 @@ fn test_average_speed_2() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(0.0)
+                .fahrt_weg(0.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(4.0)
+                .fahrt_speed(4.)
                 .build()),
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(9.0)
+                .fahrt_weg(9.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(4.0)
+                .fahrt_speed(4.)
                 .build()),
         ])
         .build();
@@ -230,7 +230,7 @@ fn test_average_speed_2() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    assert_eq!(analyser_group.average_speed().unwrap(), 5.0);
+    assert_eq!(analyser_group.average_speed().unwrap(), 5.);
 }
 
 #[test]
@@ -239,9 +239,9 @@ fn test_average_speed_1() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(3.0)
+                .fahrt_weg(3.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(8.0)
+                .fahrt_speed(8.)
                 .build()),
         ])
         .build();
@@ -249,9 +249,9 @@ fn test_average_speed_1() {
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
             ResultValue::FahrtEintrag(FahrtEintrag::builder()
-                .fahrt_weg(9.0)
+                .fahrt_weg(9.)
                 .fahrt_zeit(datetime!(2019-01-01 23:18))
-                .fahrt_speed(4.0)
+                .fahrt_speed(4.)
                 .build()),
         ])
         .build();
