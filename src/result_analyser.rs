@@ -59,4 +59,22 @@ impl ResultAnalyser {
             Err(AnalyseError::NoEntries)
         }
     }
+
+    pub fn pure_driving_time(&self) -> Result<Duration, AnalyseError> {
+        if self.result.value.len() > 1 {
+            let mut driving_time = Duration::seconds(0);
+            for i in 0..self.result.value.len() - 1 {
+                let ResultValue::FahrtEintrag(current) = self.result.value.get(i).unwrap();
+                let ResultValue::FahrtEintrag(next) = self.result.value.get(i + 1).unwrap();
+                if current.fahrt_speed > 0.0 || next.fahrt_speed > 0.0 {
+                    driving_time += next.fahrt_zeit - current.fahrt_zeit;
+                }
+            }
+            Ok(driving_time)
+        } else if self.result.value.len() > 0 {
+            Ok(Duration::seconds(0))
+        } else {
+            Err(AnalyseError::NoEntries)
+        }
+    }
 }
