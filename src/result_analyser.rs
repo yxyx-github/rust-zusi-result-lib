@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests;
 
+use time::Duration;
 use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 
 #[derive(PartialEq, Debug)]
@@ -49,5 +50,13 @@ impl ResultAnalyser {
         }
     }
 
-    // TODO: add average_moving_speed
+    pub fn driving_time(&self) -> Result<Duration, AnalyseError> {
+        if self.result.value.len() > 0 {
+            let ResultValue::FahrtEintrag(first) = self.result.value.first().unwrap();
+            let ResultValue::FahrtEintrag(last) = self.result.value.last().unwrap();
+            Ok(last.fahrt_zeit - first.fahrt_zeit)
+        } else {
+            Err(AnalyseError::NoEntries)
+        }
+    }
 }
