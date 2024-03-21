@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod tests;
+mod analyser_group_cache;
 
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
+use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
 
 #[derive(PartialEq, Debug)]
 pub enum CreateAnalyserGroupError {
@@ -9,26 +11,9 @@ pub enum CreateAnalyserGroupError {
 }
 
 #[derive(PartialEq, Debug)]
-struct AnalysisCache {
-    total_distance: Option<f32>,
-    average_distance: Option<f32>,
-    average_speed: Option<f32>,
-}
-
-impl AnalysisCache {
-    pub fn new() -> AnalysisCache {
-        Self {
-            total_distance: None,
-            average_distance: None,
-            average_speed: None,
-        }
-    }
-}
-
-#[derive(PartialEq, Debug)]
 pub struct ResultAnalyserGroup {
     analysers: Vec<ResultAnalyser>,
-    cache: AnalysisCache,
+    cache: AnalyserGroupCache,
 }
 
 impl ResultAnalyserGroup {
@@ -38,7 +23,7 @@ impl ResultAnalyserGroup {
         } else {
             Ok(Self {
                 analysers,
-                cache: AnalysisCache::new(),
+                cache: AnalyserGroupCache::new(),
             })
         }
     }

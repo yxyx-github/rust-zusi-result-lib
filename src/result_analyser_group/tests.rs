@@ -401,6 +401,5 @@ fn test_average_speed_0() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    println!("avgspd: {:?}", analyser_group.average_speed());
     assert_eq!(analyser_group.average_speed(), Err(AnalyseError::NoEntries));
 }
