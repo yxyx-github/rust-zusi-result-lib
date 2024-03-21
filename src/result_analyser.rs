@@ -13,6 +13,7 @@ pub enum AnalyseError {
 #[derive(PartialEq, Debug)]
 pub struct ResultAnalyser {
     result: ZusiResult,
+    // TODO: implement cache
 }
 
 impl ResultAnalyser {

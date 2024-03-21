@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 time = { version = "0.3.34", features = ["macros", "serde-human-readable"] }
 zusi-xml-lib = { path = "../zusi-xml-lib" }
+
+[profile.dev]
+codegen-units = 8
