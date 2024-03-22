@@ -55,6 +55,22 @@ impl ResultAnalyserGroup {
         Ok(average_distance)
     }
 
+    pub fn average_speed(&mut self) -> Result<f32, AnalyseError> {
+        if let Some(value) = &self.cache.average_speed {
+            return Ok(*value);
+        }
+
+        let mut weighted_speed_sum = 0.;
+        for analyser in self.analysers.iter() {
+            weighted_speed_sum += analyser.distance()? * analyser.average_speed()?;
+        }
+
+        let average_speed = weighted_speed_sum / self.total_distance()?;
+
+        self.cache.average_speed = Some(average_speed);
+        Ok(average_speed)
+    }
+
     pub fn pure_average_speed(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.pure_average_speed {
             return Ok(*value);

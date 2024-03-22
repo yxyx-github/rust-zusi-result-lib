@@ -34,8 +34,11 @@ fn analyse(results: Vec<ZusiResult>) {
         results.into_iter().map(|r| ResultAnalyser::new(r)).collect()
     ).unwrap();
     println!("total distance: {} m", analyser_group.total_distance().unwrap());
-    let average_speed = analyser_group.pure_average_speed().unwrap();
-    println!("pure average speed: {} m/s = {} km/h", average_speed, average_speed * 3.6);
+    println!("average distance: {} m", analyser_group.average_distance().unwrap());
+    let average_speed = analyser_group.average_speed().unwrap();
+    println!("average speed: {} m/s = {} km/h", average_speed, average_speed * 3.6);
+    let pure_average_speed = analyser_group.pure_average_speed().unwrap();
+    println!("pure average speed: {} m/s = {} km/h", pure_average_speed, pure_average_speed * 3.6);
     println!("total driving time: {}", analyser_group.total_driving_time().unwrap());
     println!("total pure driving time: {}", analyser_group.total_pure_driving_time().unwrap());
 }
