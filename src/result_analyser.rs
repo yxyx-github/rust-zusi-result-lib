@@ -8,6 +8,7 @@ use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 pub enum AnalyseError {
     NoEntries,
     ZeroDistance,
+    ZeroDrivingTime,
 }
 
 #[derive(PartialEq, Debug)]
@@ -30,6 +31,16 @@ impl ResultAnalyser {
             Ok(last.fahrt_weg - first.fahrt_weg)
         } else {
             Err(AnalyseError::NoEntries)
+        }
+    }
+
+    pub fn average_speed(&self) -> Result<f32, AnalyseError> {
+        let distance = self.distance()?;
+        let driving_time = self.driving_time()?.as_seconds_f32();
+        if driving_time == 0.0 {
+            Err(AnalyseError::ZeroDrivingTime)
+        } else {
+            Ok(distance / driving_time)
         }
     }
 

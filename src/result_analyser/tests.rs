@@ -37,6 +37,77 @@ fn test_distance_0() {
 }
 
 #[test]
+fn test_average_speed_2() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(2.33)
+                .fahrt_zeit(datetime!(2019-01-01 23:18:00))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(38.43)
+                .fahrt_zeit(datetime!(2019-01-02 0:18:10))
+                .build()),
+        ])
+        .build();
+
+    let analyser = ResultAnalyser::new(result);
+    assert_eq!(analyser.average_speed().unwrap(), 0.01);
+}
+
+#[test]
+fn test_average_speed_2_zero_distance() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(2.33)
+                .fahrt_zeit(datetime!(2019-01-01 22:18))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(2.33)
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+        ])
+        .build();
+
+    let analyser = ResultAnalyser::new(result);
+    assert_eq!(analyser.average_speed().unwrap(), 0.);
+}
+
+#[test]
+fn test_average_speed_2_zero_driving_time() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(2.33)
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+            ResultValue::FahrtEintrag(FahrtEintrag::builder()
+                .fahrt_weg(38.43)
+                .fahrt_zeit(datetime!(2019-01-01 23:18))
+                .build()),
+        ])
+        .build();
+
+    let analyser = ResultAnalyser::new(result);
+    assert_eq!(analyser.average_speed(), Err(AnalyseError::ZeroDrivingTime));
+}
+
+#[test]
+fn test_average_speed_0() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![])
+        .build();
+
+    let analyser = ResultAnalyser::new(result);
+    assert_eq!(analyser.average_speed(), Err(AnalyseError::NoEntries));
+}
+
+#[test]
 fn test_pure_average_speed_3() {
     let result = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
