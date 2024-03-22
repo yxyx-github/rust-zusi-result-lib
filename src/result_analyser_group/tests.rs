@@ -67,7 +67,7 @@ fn test_caching() {
     for _ in 0..2 {
         assert_eq!(analyser_group.total_distance().unwrap(), 20.);
         assert_eq!(analyser_group.average_distance().unwrap(), 10.);
-        assert_eq!(analyser_group.average_speed().unwrap(), 3.9);
+        assert_eq!(analyser_group.pure_average_speed().unwrap(), 3.9);
         assert_eq!(analyser_group.total_driving_time().unwrap(), Duration::minutes(65));
         assert_eq!(analyser_group.total_pure_driving_time().unwrap(), Duration::minutes(45));
     }
@@ -216,7 +216,7 @@ fn test_average_distance_with_error() {
 }
 
 #[test]
-fn test_average_speed_2() {
+fn test_pure_average_speed_2() {
     let result1 = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
@@ -253,11 +253,11 @@ fn test_average_speed_2() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    assert_eq!(analyser_group.average_speed().unwrap(), 5.);
+    assert_eq!(analyser_group.pure_average_speed().unwrap(), 5.);
 }
 
 #[test]
-fn test_average_speed_1() {
+fn test_pure_average_speed_1() {
     let result1 = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![
@@ -284,11 +284,11 @@ fn test_average_speed_1() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    assert_eq!(analyser_group.average_speed(), Err(AnalyseError::ZeroDistance));
+    assert_eq!(analyser_group.pure_average_speed(), Err(AnalyseError::ZeroDistance));
 }
 
 #[test]
-fn test_average_speed_0() {
+fn test_pure_average_speed_0() {
     let result1 = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))
         .value(vec![])
@@ -303,7 +303,7 @@ fn test_average_speed_0() {
         ResultAnalyser::new(result2),
     ]).unwrap();
 
-    assert_eq!(analyser_group.average_speed(), Err(AnalyseError::NoEntries));
+    assert_eq!(analyser_group.pure_average_speed(), Err(AnalyseError::NoEntries));
 }
 
 #[test]

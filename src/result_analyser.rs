@@ -33,7 +33,7 @@ impl ResultAnalyser {
         }
     }
 
-    pub fn average_speed(&self) -> Result<f32, AnalyseError> {
+    pub fn pure_average_speed(&self) -> Result<f32, AnalyseError> {
         if self.distance()? == 0. {
             Err(AnalyseError::ZeroDistance)
         } else if self.result.value.len() > 1 {
