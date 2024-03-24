@@ -12,7 +12,7 @@ fn main() {
 
     let mut results = vec![];
 
-    for i in 1..4 {
+    for i in 0..4 {
         let mut input_file = File::open(format!("./data/Ergebnis{i}.result.xml")).unwrap();
         let mut contents = String::new();
         input_file.read_to_string(&mut contents).unwrap();
