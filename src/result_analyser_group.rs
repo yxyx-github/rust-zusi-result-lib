@@ -3,6 +3,7 @@ mod tests;
 mod analyser_group_cache;
 
 use time::Duration;
+use zusi_xml_lib::xml::zusi::result::ZusiResult;
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
 
@@ -115,5 +116,15 @@ impl ResultAnalyserGroup {
 
         self.cache.total_pure_driving_time = Some(total_pure_driving_time);
         Ok(total_pure_driving_time)
+    }
+}
+
+impl TryFrom<Vec<ZusiResult>> for ResultAnalyserGroup {
+    type Error = CreateAnalyserGroupError;
+
+    fn try_from(value: Vec<ZusiResult>) -> Result<Self, Self::Error> {
+        ResultAnalyserGroup::new(
+            value.into_iter().map(|r| ResultAnalyser::new(r)).collect()
+        )
     }
 }

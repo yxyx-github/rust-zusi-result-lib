@@ -4,7 +4,6 @@ use std::io::Read;
 use zusi_xml_lib::xml::zusi::{Zusi, ZusiValue};
 use zusi_xml_lib::xml::zusi::result::ZusiResult;
 
-use zusi_result_lib::result_analyser::ResultAnalyser;
 use zusi_result_lib::result_analyser_group::ResultAnalyserGroup;
 
 fn main() {
@@ -30,9 +29,7 @@ fn main() {
 }
 
 fn analyse(results: Vec<ZusiResult>) {
-    let mut analyser_group = ResultAnalyserGroup::new(
-        results.into_iter().map(|r| ResultAnalyser::new(r)).collect()
-    ).unwrap();
+    let mut analyser_group: ResultAnalyserGroup = results.try_into().unwrap();
     println!("total distance: {} m", analyser_group.total_distance().unwrap());
     println!("average distance: {} m", analyser_group.average_distance().unwrap());
     let average_speed = analyser_group.average_speed().unwrap();

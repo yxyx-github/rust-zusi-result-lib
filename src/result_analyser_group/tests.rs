@@ -524,3 +524,18 @@ fn test_total_pure_driving_time_with_error() {
         Err(AnalyseError::NoEntries)
     );
 }
+
+#[test]
+fn test_try_from_results() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![])
+        .build();
+
+    assert!(ResultAnalyserGroup::try_from(vec![result]).is_ok())
+}
+
+#[test]
+fn test_try_from_zero_results() {
+    assert_eq!(ResultAnalyserGroup::try_from(vec![]), Err(CreateAnalyserGroupError::NoAnalysers));
+}
