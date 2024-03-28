@@ -3,7 +3,7 @@ mod tests;
 mod analyser_group_cache;
 
 use time::Duration;
-use zusi_xml_lib::xml::zusi::result::ZusiResult;
+use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
 
@@ -30,6 +30,10 @@ impl ResultAnalyserGroup {
         }
     }
 
+    /// Computes the sum of the distance values for all routes.
+    /// For more details see [distance](ResultAnalyser::distance).
+    ///
+    /// Errors will be propagated.
     pub fn total_distance(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.total_distance {
             return Ok(*value);
@@ -45,17 +49,25 @@ impl ResultAnalyserGroup {
         Ok(total_distance)
     }
 
+    /// Computes the average distance per route.
+    ///
+    /// Errors will be propagated.
     pub fn average_distance(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.average_distance {
             return Ok(*value);
         }
 
+        // analysers.len() can't be zero due to a check on creation.
         let average_distance = self.total_distance()? / self.analysers.len() as f32;
 
         self.cache.average_distance = Some(average_distance);
         Ok(average_distance)
     }
 
+    /// Computes the average speed for all routes including idle times.
+    /// For more details see [distance](ResultAnalyser::average_speed).
+    ///
+    /// Errors will be propagated.
     pub fn average_speed(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.average_speed {
             return Ok(*value);
@@ -72,6 +84,10 @@ impl ResultAnalyserGroup {
         Ok(average_speed)
     }
 
+    /// Computes the average speed for all routes excluding idle times.
+    /// For more details see [distance](ResultAnalyser::pure_average_speed).
+    ///
+    /// Errors will be propagated.
     pub fn pure_average_speed(&mut self) -> Result<f32, AnalyseError> {
         if let Some(value) = &self.cache.pure_average_speed {
             return Ok(*value);
@@ -88,6 +104,10 @@ impl ResultAnalyserGroup {
         Ok(pure_average_speed)
     }
 
+    /// Computes the sum of the driving times including idle times for all routes.
+    /// For more details see [distance](ResultAnalyser::driving_time).
+    ///
+    /// Errors will be propagated.
     pub fn total_driving_time(&mut self) -> Result<Duration, AnalyseError> {
         if let Some(value) = &self.cache.total_driving_time {
             return Ok(*value);
@@ -103,6 +123,10 @@ impl ResultAnalyserGroup {
         Ok(total_driving_time)
     }
 
+    /// Computes the sum of the driving times excluding idle times for all routes.
+    /// For more details see [distance](ResultAnalyser::pure_driving_time).
+    ///
+    /// Errors will be propagated.
     pub fn total_pure_driving_time(&mut self) -> Result<Duration, AnalyseError> {
         if let Some(value) = &self.cache.total_pure_driving_time {
             return Ok(*value);

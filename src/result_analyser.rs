@@ -24,6 +24,9 @@ impl ResultAnalyser {
         }
     }
 
+    /// Computes the distance for the whole route by using the `fahrt_weg` attribute.
+    ///
+    /// Throws [AnalyseError::NoEntries] if the [ZusiResult] does not contain any [FahrtEintrag](ResultValue::FahrtEintrag) entries.
     pub fn distance(&self) -> Result<f32, AnalyseError> {
         if self.result.value.len() > 0 {
             let ResultValue::FahrtEintrag(first) = self.result.value.first().unwrap();
@@ -34,6 +37,9 @@ impl ResultAnalyser {
         }
     }
 
+    /// Computes the average speed including idle times by using the overall driving time and distance.
+    ///
+    /// Throws [AnalyseError::ZeroDrivingTime] if the computed driving time is zero.
     pub fn average_speed(&self) -> Result<f32, AnalyseError> {
         let distance = self.distance()?;
         let driving_time = self.driving_time()?.as_seconds_f32();
@@ -44,6 +50,11 @@ impl ResultAnalyser {
         }
     }
 
+    /// Computes the average speed excluding idle times.
+    /// For each two [FahrtEintrag](ResultValue::FahrtEintrag) entries, the average speed between is computed.
+    /// All these local average speeds will be averaged together weighted by their individual local distance.
+    ///
+    /// Throws [AnalyseError::NoEntries] if the [ZusiResult] does not contain any [FahrtEintrag](ResultValue::FahrtEintrag) entries.
     pub fn pure_average_speed(&self) -> Result<f32, AnalyseError> {
         if self.distance()? == 0. {
             Err(AnalyseError::ZeroDistance)
@@ -62,6 +73,9 @@ impl ResultAnalyser {
         }
     }
 
+    /// Computes the whole driving time including idle times by using the `fahrt_zeit` attribute.
+    ///
+    /// Throws [AnalyseError::NoEntries] if the [ZusiResult] does not contain any [FahrtEintrag](ResultValue::FahrtEintrag) entries.
     pub fn driving_time(&self) -> Result<Duration, AnalyseError> {
         if self.result.value.len() > 0 {
             let ResultValue::FahrtEintrag(first) = self.result.value.first().unwrap();
@@ -72,6 +86,9 @@ impl ResultAnalyser {
         }
     }
 
+    /// Computes the whole driving time excluding idle times by omitting all periods with zero driving speed.
+    ///
+    /// Throws [AnalyseError::NoEntries] if the [ZusiResult] does not contain any [FahrtEintrag](ResultValue::FahrtEintrag) entries.
     pub fn pure_driving_time(&self) -> Result<Duration, AnalyseError> {
         if self.result.value.len() > 1 {
             let mut driving_time = Duration::seconds(0);
