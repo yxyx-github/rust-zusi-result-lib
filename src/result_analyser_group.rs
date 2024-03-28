@@ -1,11 +1,12 @@
+use time::Duration;
+use zusi_xml_lib::xml::zusi::result::ZusiResult;
+
+use crate::result_analyser::{AnalyseError, ResultAnalyser};
+use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
+
 #[cfg(test)]
 mod tests;
 mod analyser_group_cache;
-
-use time::Duration;
-use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
-use crate::result_analyser::{AnalyseError, ResultAnalyser};
-use crate::result_analyser_group::analyser_group_cache::AnalyserGroupCache;
 
 #[derive(PartialEq, Debug)]
 pub enum CreateAnalyserGroupError {
