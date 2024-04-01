@@ -14,13 +14,13 @@ pub enum CreateAnalyserGroupError {
 }
 
 #[derive(PartialEq, Debug)]
-pub struct ResultAnalyserGroup<T> {
-    analysers: Vec<T>,
+pub struct ResultAnalyserGroup<A> {
+    analysers: Vec<A>,
     cache: AnalyserGroupCache,
 }
 
-impl<T: AsRef<ResultAnalyser>> ResultAnalyserGroup<T> {
-    pub fn new(analysers: Vec<T>) -> Result<ResultAnalyserGroup<T>, CreateAnalyserGroupError> {
+impl<A: AsRef<ResultAnalyser>> ResultAnalyserGroup<A> {
+    pub fn new(analysers: Vec<A>) -> Result<ResultAnalyserGroup<A>, CreateAnalyserGroupError> {
         if analysers.len() == 0 {
             Err(CreateAnalyserGroupError::NoAnalysers)
         } else {
