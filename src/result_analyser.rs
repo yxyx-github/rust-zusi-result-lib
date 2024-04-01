@@ -1,8 +1,8 @@
-#[cfg(test)]
-mod tests;
-
 use time::Duration;
 use zusi_xml_lib::xml::zusi::result::{ResultValue, ZusiResult};
+
+#[cfg(test)]
+mod tests;
 
 #[derive(PartialEq, Debug)]
 pub enum AnalyseError {
@@ -105,5 +105,11 @@ impl ResultAnalyser {
         } else {
             Err(AnalyseError::NoEntries)
         }
+    }
+}
+
+impl AsRef<ResultAnalyser> for ResultAnalyser {
+    fn as_ref(&self) -> &ResultAnalyser {
+        &self
     }
 }

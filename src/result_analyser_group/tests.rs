@@ -75,8 +75,21 @@ fn test_caching() {
 }
 
 #[test]
+fn test_create_analyser_group_from_ref() {
+    let analyser = ResultAnalyser::new(
+        ZusiResult::builder()
+            .datum(datetime!(2019-01-01 23:14))
+            .value(vec![])
+            .build()
+    );
+    let _analyser_group = ResultAnalyserGroup::new(vec![
+        &analyser
+    ]);
+}
+
+#[test]
 fn test_create_analyser_group_error() {
-    let analyser_group = ResultAnalyserGroup::new(vec![]);
+    let analyser_group = ResultAnalyserGroup::new(vec![] as Vec<ResultAnalyser>);
     assert_eq!(analyser_group, Err(CreateAnalyserGroupError::NoAnalysers));
 }
 

@@ -14,13 +14,13 @@ pub enum CreateAnalyserGroupError {
 }
 
 #[derive(PartialEq, Debug)]
-pub struct ResultAnalyserGroup {
-    analysers: Vec<ResultAnalyser>,
+pub struct ResultAnalyserGroup<T> {
+    analysers: Vec<T>,
     cache: AnalyserGroupCache,
 }
 
-impl ResultAnalyserGroup {
-    pub fn new(analysers: Vec<ResultAnalyser>) -> Result<ResultAnalyserGroup, CreateAnalyserGroupError> {
+impl<T: AsRef<ResultAnalyser>> ResultAnalyserGroup<T> {
+    pub fn new(analysers: Vec<T>) -> Result<ResultAnalyserGroup<T>, CreateAnalyserGroupError> {
         if analysers.len() == 0 {
             Err(CreateAnalyserGroupError::NoAnalysers)
         } else {
@@ -43,7 +43,7 @@ impl ResultAnalyserGroup {
         let mut total_distance = 0.;
 
         for analyser in self.analysers.iter() {
-            total_distance += analyser.distance()?;
+            total_distance += analyser.as_ref().distance()?;
         }
 
         self.cache.total_distance = Some(total_distance);
@@ -76,7 +76,7 @@ impl ResultAnalyserGroup {
 
         let mut weighted_speed_sum = 0.;
         for analyser in self.analysers.iter() {
-            weighted_speed_sum += analyser.distance()? * analyser.average_speed()?;
+            weighted_speed_sum += analyser.as_ref().distance()? * analyser.as_ref().average_speed()?;
         }
 
         let average_speed = weighted_speed_sum / self.total_distance()?;
@@ -96,7 +96,7 @@ impl ResultAnalyserGroup {
 
         let mut weighted_speed_sum = 0.;
         for analyser in self.analysers.iter() {
-            weighted_speed_sum += analyser.distance()? * analyser.pure_average_speed()?;
+            weighted_speed_sum += analyser.as_ref().distance()? * analyser.as_ref().pure_average_speed()?;
         }
 
         let pure_average_speed = weighted_speed_sum / self.total_distance()?;
@@ -117,7 +117,7 @@ impl ResultAnalyserGroup {
         let mut total_driving_time = Duration::seconds(0);
 
         for analyser in self.analysers.iter() {
-            total_driving_time += analyser.driving_time()?;
+            total_driving_time += analyser.as_ref().driving_time()?;
         }
 
         self.cache.total_driving_time = Some(total_driving_time);
@@ -136,7 +136,7 @@ impl ResultAnalyserGroup {
         let mut total_pure_driving_time = Duration::seconds(0);
 
         for analyser in self.analysers.iter() {
-            total_pure_driving_time += analyser.pure_driving_time()?;
+            total_pure_driving_time += analyser.as_ref().pure_driving_time()?;
         }
 
         self.cache.total_pure_driving_time = Some(total_pure_driving_time);
@@ -144,7 +144,7 @@ impl ResultAnalyserGroup {
     }
 }
 
-impl TryFrom<Vec<ZusiResult>> for ResultAnalyserGroup {
+impl TryFrom<Vec<ZusiResult>> for ResultAnalyserGroup<ResultAnalyser> {
     type Error = CreateAnalyserGroupError;
 
     fn try_from(value: Vec<ZusiResult>) -> Result<Self, Self::Error> {
