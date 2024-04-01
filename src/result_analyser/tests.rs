@@ -6,6 +6,16 @@ use zusi_xml_lib::xml::zusi::result::fahrt_eintrag::FahrtEintrag;
 use crate::result_analyser::{AnalyseError, ResultAnalyser};
 
 #[test]
+fn create_result_analyser_from_ref() {
+    let result = ZusiResult::builder()
+        .datum(datetime!(2019-01-01 23:14))
+        .value(vec![])
+        .build();
+
+    let _analyser = ResultAnalyser::new(&result);
+}
+
+#[test]
 fn test_distance_2() {
     let result = ZusiResult::builder()
         .datum(datetime!(2019-01-01 23:14))

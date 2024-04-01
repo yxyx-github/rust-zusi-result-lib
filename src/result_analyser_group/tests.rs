@@ -89,7 +89,7 @@ fn test_create_analyser_group_from_ref() {
 
 #[test]
 fn test_create_analyser_group_error() {
-    let analyser_group = ResultAnalyserGroup::new(vec![] as Vec<ResultAnalyser>);
+    let analyser_group = ResultAnalyserGroup::new(vec![] as Vec<ResultAnalyser<ZusiResult>>);
     assert_eq!(analyser_group, Err(CreateAnalyserGroupError::NoAnalysers));
 }
 
@@ -550,5 +550,9 @@ fn test_try_from_results() {
 
 #[test]
 fn test_try_from_zero_results() {
-    assert_eq!(ResultAnalyserGroup::try_from(vec![]), Err(CreateAnalyserGroupError::NoAnalysers));
+    assert_eq!(
+        ResultAnalyserGroup::try_from(vec![])
+            as Result<ResultAnalyserGroup<ResultAnalyser<ZusiResult>, ZusiResult>, CreateAnalyserGroupError>,
+        Err(CreateAnalyserGroupError::NoAnalysers)
+    );
 }

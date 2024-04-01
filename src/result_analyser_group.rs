@@ -1,3 +1,4 @@
+use std::marker::PhantomData;
 use time::Duration;
 use zusi_xml_lib::xml::zusi::result::ZusiResult;
 
@@ -14,19 +15,21 @@ pub enum CreateAnalyserGroupError {
 }
 
 #[derive(PartialEq, Debug)]
-pub struct ResultAnalyserGroup<A> {
+pub struct ResultAnalyserGroup<A, R> {
     analysers: Vec<A>,
     cache: AnalyserGroupCache,
+    _phantom: PhantomData<R>,
 }
 
-impl<A: AsRef<ResultAnalyser>> ResultAnalyserGroup<A> {
-    pub fn new(analysers: Vec<A>) -> Result<ResultAnalyserGroup<A>, CreateAnalyserGroupError> {
+impl<A: AsRef<ResultAnalyser<R>>, R: AsRef<ZusiResult>> ResultAnalyserGroup<A, R> {
+    pub fn new(analysers: Vec<A>) -> Result<ResultAnalyserGroup<A, R>, CreateAnalyserGroupError> {
         if analysers.len() == 0 {
             Err(CreateAnalyserGroupError::NoAnalysers)
         } else {
             Ok(Self {
                 analysers,
                 cache: AnalyserGroupCache::new(),
+                _phantom: PhantomData,
             })
         }
     }
@@ -144,10 +147,10 @@ impl<A: AsRef<ResultAnalyser>> ResultAnalyserGroup<A> {
     }
 }
 
-impl TryFrom<Vec<ZusiResult>> for ResultAnalyserGroup<ResultAnalyser> {
+impl<R: AsRef<ZusiResult>> TryFrom<Vec<R>> for ResultAnalyserGroup<ResultAnalyser<R>, R> {
     type Error = CreateAnalyserGroupError;
 
-    fn try_from(value: Vec<ZusiResult>) -> Result<Self, Self::Error> {
+    fn try_from(value: Vec<R>) -> Result<Self, Self::Error> {
         ResultAnalyserGroup::new(
             value.into_iter().map(|r| ResultAnalyser::new(r)).collect()
         )
